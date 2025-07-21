@@ -1,0 +1,11 @@
+### STS ###
+/.metadata/
+.metadata/.*
+/.sonarlint/
+/face-matcher-api/faceenv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.env
