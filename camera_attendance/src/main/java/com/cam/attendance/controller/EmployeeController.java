@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.cam.attendance.domain.Employee;
+import com.cam.attendance.domain.User;
 import com.cam.attendance.repository.EmployeeRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,9 +36,9 @@ public class EmployeeController {
 			@RequestParam("imageName") MultipartFile imageName) {
 		System.err.println("Employee: " + employeeJson);
 		
-		Employee employee = null;
+		User employee = null;
 		try {
-			employee = objMapper.readValue(employeeJson, Employee.class);
+			employee = objMapper.readValue(employeeJson, User.class);
 		} catch (JsonProcessingException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Put valid product json");
 		}
@@ -50,7 +50,7 @@ public class EmployeeController {
 				employee.setImageName(imageName.getOriginalFilename());
 			}
 
-			Employee savedEmployee = empRepo.save(employee);
+			User savedEmployee = empRepo.save(employee);
 
 			return new ResponseEntity<>(savedEmployee, HttpStatus.CREATED);
 		} catch (Exception e) {
