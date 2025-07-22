@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cam.attendance.domain.User;
-import com.cam.attendance.repository.EmployeeRepository;
+import com.cam.attendance.repository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -26,7 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class EmployeeController {
 
 	@Autowired
-	EmployeeRepository empRepo;
+	UserRepository empRepo;
 	
 	@Autowired
 	ObjectMapper objMapper;
