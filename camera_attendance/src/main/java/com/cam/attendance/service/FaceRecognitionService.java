@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cam.attendance.domain.User;
-import com.cam.attendance.repository.EmployeeRepository;
+import com.cam.attendance.repository.UserRepository;
 import com.cam.attendance.utils.Constants;
 import com.cam.attendance.utils.FaceMatcher;
 
@@ -15,7 +15,7 @@ import com.cam.attendance.utils.FaceMatcher;
 public class FaceRecognitionService {
 
 	@Autowired
-	private EmployeeRepository employeeRepository;
+	private UserRepository employeeRepository;
 
 	@Autowired
 	private FaceMatcher faceMatcher;
