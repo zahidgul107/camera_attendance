@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cam.attendance.domain.Attendance;
-import com.cam.attendance.domain.Employee;
+import com.cam.attendance.domain.User;
 import com.cam.attendance.repository.AttendanceRepository;
 import com.cam.attendance.service.FaceRecognitionService;
 
@@ -47,13 +47,13 @@ public class AttendanceController {
 	                    .body("Failed to save uploaded image.");
 	        }
 
-	        Employee matchedEmployee = faceRecognitionService.findMatchingEmployee(tempFile, employeeId);
+	        User matchedEmployee = faceRecognitionService.findMatchingEmployee(tempFile, employeeId);
 
 	        tempFile.delete();
 
 	        if (matchedEmployee != null) {
 	            Attendance attendance = new Attendance();
-	            attendance.setEmployee(matchedEmployee);
+	            attendance.setUser(matchedEmployee);
 	            attendance.setCheckInTime(LocalDateTime.now());
 	            attendanceRepo.save(attendance);
 	            return ResponseEntity.ok("Attendance marked for " + matchedEmployee.getName());

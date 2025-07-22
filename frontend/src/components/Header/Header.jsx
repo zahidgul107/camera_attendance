@@ -15,7 +15,7 @@ const Header = () => {
 
   return (
     <nav className="navbar navbar-dark navbar-expand-lg bg-dark border-bottom border-body sticky-top">
-      <a className="navbar-brand">Task Tracker</a>
+      <a className="navbar-brand ms-3">Attendance System</a>
       <button
         className="navbar-toggler"
         type="button"

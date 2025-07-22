@@ -16,7 +16,7 @@ public class Attendance {
 	private Long id;
 	
 	@ManyToOne
-    private Employee employee;
+    private User user;
 
     private LocalDateTime checkInTime;
 
@@ -28,12 +28,12 @@ public class Attendance {
 		this.id = id;
 	}
 
-	public Employee getEmployee() {
-		return employee;
+	public User getUser() {
+		return user;
 	}
 
-	public void setEmployee(Employee employee) {
-		this.employee = employee;
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	public LocalDateTime getCheckInTime() {

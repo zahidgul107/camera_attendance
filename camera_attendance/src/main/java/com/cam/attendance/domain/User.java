@@ -11,7 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 
 @Entity
-public class Employee {
+public class User {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,7 +23,7 @@ public class Employee {
 	@Column(name = "image")
     private String imageName;
 	
-	@OneToMany(mappedBy = "employee")
+	@OneToMany(mappedBy = "user")
 	List<Attendance> attendanceList = new ArrayList<>();
 
 	public Long getId() {
