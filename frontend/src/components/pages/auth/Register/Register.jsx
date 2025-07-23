@@ -51,7 +51,7 @@ const Register = (props) => {
     <div id="body1">
       <div className="signup-container">
         <div className="signup-form">
-          <h2>Sign Up</h2>
+          <h2>Register</h2>
           <div
             className="error-message"
             style={{ display: errorMessage ? 'block' : 'none' }}
@@ -65,6 +65,21 @@ const Register = (props) => {
             {successMessage}
           </div>
           <form action="#" method="post">
+            <img
+              src="https://i.pinimg.com/originals/7f/24/d8/7f24d81c34fc9ed92e5d1a71c1969d36.png"
+              style={{ width: '100px', border: '2px solid black' }}
+              alt="example"
+            />
+
+            <input
+              type="file"
+              name="name"
+              placeholder="Full Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+
             <input
               type="text"
               name="name"
@@ -109,14 +124,14 @@ const Register = (props) => {
             <div className="col-md-12 text-center">
               {loading ? (
                 <div className="loading" style={{ display: 'block' }}>
-                  Signing up...
+                  Registering...
                 </div>
               ) : (
                 <button
                   type="button"
                   onClick={(e) => handleRegistrationForm(e)}
                 >
-                  Sign Up
+                  Register
                 </button>
               )}
             </div>
