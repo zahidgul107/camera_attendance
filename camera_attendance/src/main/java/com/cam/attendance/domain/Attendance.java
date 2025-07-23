@@ -2,6 +2,7 @@ package com.cam.attendance.domain;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,6 +20,9 @@ public class Attendance {
     private User user;
 
     private LocalDateTime checkInTime;
+    
+    @Column(name = "attendance_image")
+    private String imageName;
 
 	public Long getId() {
 		return id;
@@ -42,6 +46,14 @@ public class Attendance {
 
 	public void setCheckInTime(LocalDateTime checkInTime) {
 		this.checkInTime = checkInTime;
+	}
+
+	public String getImageName() {
+		return imageName;
+	}
+
+	public void setImageName(String imageName) {
+		this.imageName = imageName;
 	}
     
     

@@ -5,10 +5,11 @@ import './App.css'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import Header from './components/Header/Header'
 import Login from './components/pages/auth/Login/Login'
-import { AddTask, ListTasks, Dashboard } from './components/pages/tasks'
+import { AddTask, ListTasks, Dashboard } from './components/pages/attendance'
 import Register from './components/pages/auth/Register/Register'
 import Footer from './components/Footer/Footer'
 import { useSelector } from 'react-redux'
+import AddAttendance from './components/pages/attendance/AddAttendance'
 
 function App() {
   const { loggedInUser } = useSelector((state) => state.user)
@@ -39,6 +40,14 @@ function App() {
             element={
               <AuthenticatedRoute>
                 <ListTasks />
+              </AuthenticatedRoute>
+            }
+          ></Route>
+          <Route
+            path="/addAttendance"
+            element={
+              <AuthenticatedRoute>
+                <AddAttendance />
               </AuthenticatedRoute>
             }
           ></Route>
