@@ -22,8 +22,10 @@ export const createAttendance = createAsyncThunk(
         attendance,
         config
       )
+      console.log(resp)
       return resp.data
     } catch (error) {
+      console.log(error)
       return thunkAPI.rejectWithValue(error)
     }
   }
@@ -232,6 +234,8 @@ const attendanceSlice = createSlice({
           state.unauthorizedMessage = action.payload.response.data.message
         if (action?.payload?.response?.status === 400)
           state.failMessage = action.payload.response.data.message
+        if (action?.payload?.response?.status === 404)
+          state.failMessage = action.payload.response.data
       })
       .addCase(updateAttendance.pending, (state) => {
         state.isLoading = true
