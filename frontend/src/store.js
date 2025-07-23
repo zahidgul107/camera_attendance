@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit'
 import userReducer from './features/login/userSlice'
-import taskReducer from './features/taskList/taskListSlice'
+import taskReducer from './features/slice/taskListSlice'
+import attendanceReducer from './features/slice/attendanceSlice'
 import dashboardReducer from './features/dashboard/dashboardSlice'
 import storage from 'redux-persist/lib/storage'
 import { persistReducer } from 'redux-persist'
@@ -15,6 +16,7 @@ const persistConfig = {
 const reducer = combineReducers({
   user: userReducer,
   tasks: taskReducer,
+  attendance: attendanceReducer,
   dashboard: dashboardReducer,
 })
 

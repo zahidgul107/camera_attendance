@@ -3,14 +3,16 @@ import axios from 'axios'
 import { signOut } from '../login/userSlice'
 
 //const API_URL = 'https://2e08-203-129-216-146.ngrok-free.app/api/task'
-const API_URL = 'http://localhost:9099/api/dashboard'
+const API_URL = 'http://localhost:9901/api/dashboard'
 
 export const getCount = createAsyncThunk(
-  'tasks/getCount',
+  'attendance/getCount',
   async (arg, thunkAPI) => {
     try {
       const { user } = thunkAPI.getState()
       const loggedInUser = user.loggedInUser
+      console.log(loggedInUser)
+      console.log(`${loggedInUser.tokenType} ${loggedInUser.accessToken}`)
       const config = {
         headers: {
           Authorization: `${loggedInUser.tokenType} ${loggedInUser.accessToken}`,

@@ -16,7 +16,7 @@ const Dashboard = () => {
     <div className="container mt-5">
       <div className="row column1">
         <div className="col-md-6">
-          <Link to="/addTask">
+          <Link to="/addAttendance">
             <div className="full counter_section margin_bottom_30">
               <div className="couter_icon">
                 <span>
@@ -26,7 +26,9 @@ const Dashboard = () => {
               <div className="counter_no">
                 <div>
                   <p className="total_no"></p>
-                  <p className="head_couter text-warning fw-bold">Add Task</p>
+                  <p className="head_couter text-warning fw-bold">
+                    Add Attendance
+                  </p>
                 </div>
               </div>
             </div>
@@ -45,7 +47,9 @@ const Dashboard = () => {
                   <p className="total_no text-info font-weight-bold">
                     {count?.tasksCount}
                   </p>
-                  <p className="head_couter text-warning fw-bold">View Tasks</p>
+                  <p className="head_couter text-warning fw-bold">
+                    View Attendance
+                  </p>
                 </div>
               </div>
             </div>

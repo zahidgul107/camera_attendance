@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,7 @@ import com.cam.attendance.domain.User;
 import com.cam.attendance.repository.AttendanceRepository;
 import com.cam.attendance.service.FaceRecognitionService;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/attendance")
 public class AttendanceController {
@@ -55,6 +57,7 @@ public class AttendanceController {
 	            Attendance attendance = new Attendance();
 	            attendance.setUser(matchedEmployee);
 	            attendance.setCheckInTime(LocalDateTime.now());
+	            attendance.setImageName(liveImage.getOriginalFilename());
 	            attendanceRepo.save(attendance);
 	            return ResponseEntity.ok("Attendance marked for " + matchedEmployee.getName());
 	        } else {

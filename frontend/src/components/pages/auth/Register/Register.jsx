@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import './index.css'
 import { register } from '../../../../services/AuthService'
+import avatar from '../../../../assets/images/avatar.png'
 
 const Register = (props) => {
   const [successMessage, setSuccessMessage] = useState('')
@@ -12,39 +13,62 @@ const Register = (props) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [image, setImage] = useState(avatar)
+  const [imageFile, setImageFile] = useState(null)
+
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setImageFile(file) // store the actual file to send to backend
+
+    const reader = new FileReader()
+    reader.onload = () => {
+      setImage(reader.result) // preview image
+    }
+    reader.readAsDataURL(file)
+  }
 
   const handleRegistrationForm = (e) => {
     e.preventDefault()
+
     if (password !== confirmPassword) {
       setErrorMessage('Password and Confirm Password do not match')
       setTimeout(() => setErrorMessage(''), 4000)
       return
     }
-    setLoading(true)
-    console.log('name', name)
-    register(name, username, email, password)
-      .then(
-        (response) => {
-          setSuccessMessage(response.data.message)
-          setTimeout(() => setSuccessMessage(''), 4000)
-        },
-        (error) => {
-          const resMessage =
-            error.response.data.errors ||
-            error.response.data.message ||
-            error.message ||
-            error.toString()
 
-          setErrorMessage(resMessage)
-          console.log(resMessage)
-          console.log(error.response.data.errors)
-          setTimeout(() => setErrorMessage(''), 4000)
-        }
-      )
+    const user = {
+      name,
+      username,
+      email,
+      password,
+    }
+
+    const formData = new FormData()
+    formData.append('user', JSON.stringify(user)) // stringified JSON
+    formData.append('userImage', imageFile) // file from input (we’ll store this below)
+
+    setLoading(true)
+
+    register(formData)
+      .then((response) => {
+        setSuccessMessage(response.data.message)
+        setTimeout(() => setSuccessMessage(''), 4000)
+      })
+      .catch((error) => {
+        const resMessage =
+          error.response?.data?.errors ||
+          error.response?.data?.message ||
+          error.message ||
+          error.toString()
+
+        setErrorMessage(resMessage)
+        setTimeout(() => setErrorMessage(''), 4000)
+      })
       .finally(() => {
         setLoading(false)
       })
-    //  }
   }
 
   return (
@@ -65,20 +89,27 @@ const Register = (props) => {
             {successMessage}
           </div>
           <form action="#" method="post">
-            <img
-              src="https://i.pinimg.com/originals/7f/24/d8/7f24d81c34fc9ed92e5d1a71c1969d36.png"
-              style={{ width: '100px', border: '2px solid black' }}
-              alt="example"
-            />
+            <div className="container">
+              <div className="avatar-upload">
+                <div className="avatar-edit">
+                  <input
+                    type="file"
+                    id="imageUpload"
+                    accept=".png, .jpg, .jpeg"
+                    onChange={handleImageChange}
+                  />
+                  <label htmlFor="imageUpload"></label>
+                </div>
 
-            <input
-              type="file"
-              name="name"
-              placeholder="Full Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
+                <div className="avatar-preview">
+                  <div
+                    id="imagePreview"
+                    style={{ backgroundImage: `url(${image})` }}
+                  ></div>
+                </div>
+              </div>
+              <h1>Upload Your Photo</h1>
+            </div>
 
             <input
               type="text"

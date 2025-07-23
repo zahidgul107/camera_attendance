@@ -8,7 +8,7 @@ import {
   getAllTasks,
   getPagTasks,
   searchTask,
-} from '../../../features/taskList/taskListSlice'
+} from '../../../features/slice/taskListSlice'
 
 const ListTasks = () => {
   const { taskList, isLoading, errorMessage, successMessage, failMessage } =
