@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.cam.attendance.domain.Attendance;
 import com.cam.attendance.domain.User;
 import com.cam.attendance.repository.AttendanceRepository;
+import com.cam.attendance.response.MessageResponse;
 import com.cam.attendance.service.FaceRecognitionService;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -50,7 +51,7 @@ public class AttendanceController {
 	        }
 
 	        User matchedEmployee = faceRecognitionService.findMatchingEmployee(tempFile, employeeId);
-
+	        System.err.println(matchedEmployee);
 	        tempFile.delete();
 
 	        if (matchedEmployee != null) {
@@ -59,7 +60,7 @@ public class AttendanceController {
 	            attendance.setCheckInTime(LocalDateTime.now());
 	            attendance.setImageName(liveImage.getOriginalFilename());
 	            attendanceRepo.save(attendance);
-	            return ResponseEntity.ok("Attendance marked for " + matchedEmployee.getName());
+	            return ResponseEntity.ok(new MessageResponse("Attendance marked for " + matchedEmployee.getName()));
 	        } else {
 	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No match found");
 	        }

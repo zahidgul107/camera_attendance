@@ -23,10 +23,11 @@ public class FaceRecognitionService {
 	public User findMatchingEmployee(File inputFace, Long employeeId) {
 		User employee = employeeRepository.findById(employeeId)
 			    .orElseThrow(() -> new RuntimeException("Employee not found with ID: " + employeeId));
-
+		System.err.println(employee.getName());
 		File storedFace = new File(Constants.PATH + employee.getImageName());
 
 		boolean match = faceMatcher.compareFaces(storedFace, inputFace);
+		System.err.println(match);
 		if (match) {
 			return employee;
 		}

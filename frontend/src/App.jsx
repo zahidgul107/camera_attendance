@@ -10,6 +10,8 @@ import Register from './components/pages/auth/Register/Register'
 import Footer from './components/Footer/Footer'
 import { useSelector } from 'react-redux'
 import AddAttendance from './components/pages/attendance/AddAttendance'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 function App() {
   const { loggedInUser } = useSelector((state) => state.user)
@@ -72,6 +74,7 @@ function App() {
         </Routes>
         <Footer />
       </BrowserRouter>
+      <ToastContainer position="top-center" autoClose={3000} />
     </>
   )
 }
