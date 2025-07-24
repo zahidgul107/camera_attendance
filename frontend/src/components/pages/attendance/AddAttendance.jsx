@@ -34,6 +34,14 @@ const AddAttendance = () => {
       if (attendance) {
         setAttendanceData(attendance)
       }
+    } else {
+      const now = new Date()
+      const localISOTime = new Date(
+        now.getTime() - now.getTimezoneOffset() * 60000
+      )
+        .toISOString()
+        .slice(0, 16)
+      setAttendanceData({ checkInTime: localISOTime })
     }
   }, [id, attendanceList])
 
@@ -170,13 +178,9 @@ const AddAttendance = () => {
                     }`}
                     name="checkInTime"
                     value={attendanceData.checkInTime}
-                    onChange={(e) =>
-                      setAttendanceData({
-                        ...attendanceData,
-                        checkInTime: e.target.value,
-                      })
-                    }
+                    readOnly // ✅ prevent manual editing
                   />
+
                   {errors.checkInTime && (
                     <div className="invalid-feedback">{errors.checkInTime}</div>
                   )}
