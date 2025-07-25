@@ -90,13 +90,16 @@ const AddAttendance = () => {
       } else {
         dispatch(createAttendance(formData))
       }
-
-      setAttendanceData({
-        checkInTime: '',
-      })
+      const now = new Date()
+      const localISOTime = new Date(
+        now.getTime() - now.getTimezoneOffset() * 60000
+      )
+        .toISOString()
+        .slice(0, 16)
+      setAttendanceData({ checkInTime: localISOTime })
       setImageFile(null)
-      setImage(avatar)
     }
+    setImage(avatar)
   }
 
   function pageTitle() {
@@ -107,16 +110,16 @@ const AddAttendance = () => {
     }
   }
 
-  if (isLoading) {
-    return (
-      <div id="preloader">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-      </div>
-    )
-  }
+  // if (isLoading) {
+  //   return (
+  //     <div id="preloader">
+  //       <div></div>
+  //       <div></div>
+  //       <div></div>
+  //       <div></div>
+  //     </div>
+  //   )
+  // }
 
   const handleImageChange = (e) => {
     const file = e.target.files?.[0]
@@ -185,9 +188,24 @@ const AddAttendance = () => {
                     <div className="invalid-feedback">{errors.checkInTime}</div>
                   )}
                 </div>
-                <button type="submit" className="btn btn-primary">
+                {/* <button type="submit" className="btn btn-primary">
                   Submit
-                </button>
+                </button> */}
+                <div className="col-md-12 text-center">
+                  {isLoading ? (
+                    <div className="loading" style={{ display: 'block' }}>
+                      Submitting...
+                    </div>
+                  ) : (
+                    <button
+                      type="submit"
+                      className="btn btn-primary"
+                      //  onClick={(e) => handleRegistrationForm(e)}
+                    >
+                      Submit
+                    </button>
+                  )}
+                </div>
               </form>
             </div>
           </div>

@@ -1,25 +1,34 @@
 package com.cam.attendance.service.impl;
 
 import java.security.Principal;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.cam.attendance.domain.Attendance;
 import com.cam.attendance.domain.User;
+import com.cam.attendance.dto.SearchAttendance;
 import com.cam.attendance.repository.AttendanceRepository;
 import com.cam.attendance.repository.UserRepository;
 import com.cam.attendance.service.AttendanceService;
+import com.cam.attendance.specification.AttendanceSpecification;
+
+import jakarta.servlet.http.HttpSession;
 
 @Service
 public class AttendanceServiceImpl implements AttendanceService {
-	
+
 	@Autowired
 	AttendanceRepository attendanceRepo;
-	
+
 	@Autowired
 	UserRepository userRepo;
 
@@ -28,8 +37,57 @@ public class AttendanceServiceImpl implements AttendanceService {
 		User user = userRepo.findByUsername(principal.getName()).get();
 		List<Attendance> listAttendance = attendanceRepo.findByUser(user);
 		Map<String, Object> response = new HashMap<>();
-        response.put("tasksCount", listAttendance.size());
+		response.put("tasksCount", listAttendance.size());
 		return response;
+	}
+
+	@Override
+	public Page<Attendance> getPagAttendance(int page, HttpSession session, Principal principal) {
+		SearchAttendance sessionSearch = (SearchAttendance) session.getAttribute("search");
+		Page<Attendance> response = null;
+		SearchAttendance search = null;
+		if (sessionSearch != null) {
+			search = sessionSearch;
+			response = pagination(search, page, session, principal);
+		} else {
+			search = new SearchAttendance();
+			response = pagination(search, page, session, principal);
+		}
+		Enumeration<String> attributeNames = session.getAttributeNames();
+		while (attributeNames.hasMoreElements()) {
+			String attributeName = attributeNames.nextElement();
+			Object attributeValue = session.getAttribute(attributeName);
+			System.err.println(attributeName + " : " + attributeValue);
+		}
+		return response;
+	}
+
+	private Page<Attendance> pagination(SearchAttendance search, int page, HttpSession session, Principal principal) {
+		User user = userRepo.findByUsername(principal.getName()).get();
+
+		Pageable pageable = PageRequest.of(page - 1, 10);
+
+		Specification<Attendance> spec = Specification
+				.where(AttendanceSpecification.betweenAttendanceDate(search.getFromDate(), search.getToDate())
+						.and(AttendanceSpecification.withUser(user)));
+		Page<Attendance> attendances = attendanceRepo.findAll(spec, pageable);
+
+		/*
+		 * List<Task> taskList = taskDao.search(search, user); List<TaskDTO> taskDtoList
+		 * = taskList.stream().map((task) -> modelMapper.map(task, TaskDTO.class))
+		 * .collect(Collectors.toList());
+		 * 
+		 * page = (page > 0) ? page : 1; from = ROWS * (page - 1); records = (long)
+		 * taskDtoList.size(); total = (int) Math.ceil((double) records / (double)
+		 * ROWS); List<TaskDTO> pagTaskList =
+		 * taskDtoList.stream().skip(from).limit(ROWS).collect(Collectors.toList());
+		 * 
+		 * Map<String, Object> response = new HashMap<>(); response.put("pagTaskList",
+		 * pagTaskList); response.put("currentPage", page); response.put("totalPages",
+		 * total); response.put("totalItems", taskDtoList.size());
+		 * session.setAttribute("page", page); session.setAttribute("search", search);
+		 */
+		return attendances;
 	}
 
 }

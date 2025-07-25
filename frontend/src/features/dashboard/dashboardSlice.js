@@ -2,8 +2,8 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import axios from 'axios'
 import { signOut } from '../login/userSlice'
 
-//const API_URL = 'https://2e08-203-129-216-146.ngrok-free.app/api/task'
-const API_URL = 'http://localhost:9901/api/dashboard'
+const API_URL = 'https://aca9236bface.ngrok-free.app/api/dashboard'
+//const API_URL = 'http://localhost:9901/api/dashboard'
 
 export const getCount = createAsyncThunk(
   'attendance/getCount',
@@ -16,10 +16,12 @@ export const getCount = createAsyncThunk(
       const config = {
         headers: {
           Authorization: `${loggedInUser.tokenType} ${loggedInUser.accessToken}`,
+          'ngrok-skip-browser-warning': 'true',
         },
       }
 
       const resp = await axios.get(API_URL + '/getDashboardCount', config)
+      console.log('response:     ', resp.data)
       return resp.data
     } catch (error) {
       if (error?.response?.status === 401) {
