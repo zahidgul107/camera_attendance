@@ -89,28 +89,32 @@ public class WebSecurityConfig {
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.cors().and().csrf(csrf -> csrf.disable())
-				.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
-				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.authorizeHttpRequests(
-						auth -> auth.requestMatchers("/api/auth/**").permitAll().requestMatchers("/api/attendance/**")
-								.permitAll().requestMatchers("/api/test/**").permitAll().anyRequest().authenticated());
+	    http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+	        .csrf(csrf -> csrf.disable())
+	        .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
+	        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+	        .authorizeHttpRequests(auth -> auth
+	            .requestMatchers("/api/auth/**").permitAll()
+	            .requestMatchers("/api/attendance/**").permitAll()
+	            .requestMatchers("/api/test/**").permitAll()
+	            .anyRequest().authenticated());
 
-		http.authenticationProvider(authenticationProvider());
+	    http.authenticationProvider(authenticationProvider());
+	    http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
-		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-
-		return http.build();
+	    return http.build();
 	}
+
 	
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 	    CorsConfiguration configuration = new CorsConfiguration();
-	    configuration.setAllowedOrigins(List.of("http://localhost:3000")); // ✅ frontend origin
+	    configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://b01d9db5b20f.ngrok-free.app", "http://192.168.1.9:3000/"));
 	    configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 	    configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
 	    configuration.setAllowCredentials(true); // ✅ only if you're using cookies or sending Authorization header
-
+	    configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "ngrok-skip-browser-warning"));
+	    
 	    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 	    source.registerCorsConfiguration("/**", configuration);
 	    return source;

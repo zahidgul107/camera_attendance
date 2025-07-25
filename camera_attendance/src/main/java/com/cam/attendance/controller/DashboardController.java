@@ -15,7 +15,7 @@ import com.cam.attendance.service.AttendanceService;
 
 import lombok.AllArgsConstructor;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
+//@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/dashboard")
 public class DashboardController {
