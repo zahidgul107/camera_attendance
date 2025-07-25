@@ -8,6 +8,7 @@ import {
   getAllAttendance,
   getPagAttendance,
   searchAttendance,
+  API_URL,
 } from '../../../features/slice/attendanceSlice'
 
 const ListAttendance = () => {
@@ -18,8 +19,10 @@ const ListAttendance = () => {
     successMessage,
     failMessage,
   } = useSelector((store) => store.attendance)
+  const loggedInUser = useSelector((store) => store.user.loggedInUser)
   const [search, setSearch] = useState({
-    checkInTime: '',
+    fromDate: '',
+    toDate: '',
   })
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -167,7 +170,7 @@ const ListAttendance = () => {
               <strong className="fw-bold">
                 Total Attendance List :{' '}
                 <strong className="badge badge-success p-2 rounded-circle fw-bold text-black">
-                  {attendanceList.totalItems}
+                  {attendanceList.totalElements}
                 </strong>
               </strong>
             </div>
@@ -176,30 +179,25 @@ const ListAttendance = () => {
             <form onSubmit={handleSubmit}>
               <div className="row">
                 <div className="form-group col-md-6">
-                  <label htmlFor="status">Status</label>
-                  <select
-                    className="form-select form-control"
-                    aria-label="Default select example"
-                    value={search.status}
-                    onChange={handleChange}
-                    name="status"
-                  >
-                    {/* <option>Select task status</option> */}
-                    <option value="PENDING">PENDING</option>
-                    <option value="IN_PROGRESS">IN_PROGRESS</option>
-                    <option value="COMPLETED">COMPLETED</option>
-                  </select>
-                </div>
-
-                <div className="form-group col-md-6">
-                  <label htmlFor="dueDate">Due Date</label>
+                  <label htmlFor="fromDate">From Date</label>
                   <input
                     type="date"
                     className="form-control picker"
                     placeholder="Enter From Date"
-                    value={search.dueDate}
+                    value={search.fromDate}
                     onChange={handleChange}
-                    name="dueDate"
+                    name="fromDate"
+                  />
+                </div>
+                <div className="form-group col-md-6">
+                  <label htmlFor="dueDate">To Date</label>
+                  <input
+                    type="date"
+                    className="form-control picker"
+                    placeholder="Enter To Date"
+                    value={search.toDate}
+                    onChange={handleChange}
+                    name="toDate"
                   />
                 </div>
               </div>
@@ -216,43 +214,26 @@ const ListAttendance = () => {
           <table className="table table-hover table-responsive-sm table-success table-striped">
             <thead>
               <tr>
-                <th scope="col">Task Title</th>
-                <th scope="col">Task Description</th>
-                <th scope="col">Task Due Date</th>
-                <th scope="col">Task Status</th>
-                <th scope="col">Actions</th>
+                <th scope="col">Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Check-In-Time</th>
+                <th scope="col">Attendance Photo</th>
               </tr>
             </thead>
             <tbody>
-              {attendanceList?.pagAttendanceList?.map((attendance) => (
+              {attendanceList?.content?.map((attendance) => (
                 <tr key={attendance.id}>
-                  <td>{attendance.checkInTime}</td>
-                  <td>{attendance.checkInTime}</td>
-                  <td>{attendance.checkInTime}</td>
+                  <td>{loggedInUser.name}</td>
+                  <td>{loggedInUser.email}</td>
                   <td>{attendance.checkInTime}</td>
                   <td>
-                    <a
-                      className="me-2"
-                      onClick={() => updateAttendance(attendance.id)}
-                    >
-                      <i
-                        className="fa fa-edit text-success"
-                        data-bs-toggle="tooltip"
-                        data-bs-placement="bottom"
-                        data-bs-title="Update Bill "
-                      ></i>
-                    </a>
-                    <a
-                      type="button"
-                      onClick={() => handleDeleteAttendance(attendance.id)}
-                    >
-                      <i
-                        className="fa fa-trash text-danger"
-                        data-bs-toggle="tooltip"
-                        data-bs-placement="bottom"
-                        data-bs-title="Delete Bill"
-                      ></i>
-                    </a>
+                    <img
+                      src={`${API_URL}/getImage/${encodeURIComponent(
+                        attendance?.imageName
+                      )}`}
+                      className="rounded mx-auto d-block img-thumbnail"
+                      alt="Attendance Image"
+                    />
                   </td>
                 </tr>
               ))}
@@ -275,9 +256,11 @@ const ListAttendance = () => {
                   <button
                     className="pe-3 page-link"
                     onClick={() =>
-                      dispatch(getPagAttendance(taskList.currentPage - 1))
+                      dispatch(
+                        getPagAttendance(attendanceList.pageable.pageNumber)
+                      )
                     }
-                    disabled={attendanceList.currentPage <= 1}
+                    disabled={attendanceList.pageable.pageNumber === 0}
                   >
                     {'<<'}
                   </button>
@@ -299,10 +282,13 @@ const ListAttendance = () => {
                   <button
                     className="pe-3 page-link"
                     onClick={() =>
-                      dispatch(getPagAttendance(attendanceList.currentPage + 1))
+                      dispatch(
+                        getPagAttendance(attendanceList.pageable.pageNumber + 2)
+                      )
                     }
                     disabled={
-                      attendanceList.currentPage >= attendanceList.totalPages
+                      attendanceList.pageable.pageNumber >=
+                      attendanceList.totalPages - 1
                     }
                   >
                     {'>>'}

@@ -35,7 +35,7 @@ const Dashboard = () => {
           </Link>
         </div>
         <div className="col-md-6">
-          <Link to="/tasks">
+          <Link to="/viewAttendance">
             <div className="full counter_section margin_bottom_30">
               <div className="couter_icon">
                 <div>
@@ -45,7 +45,7 @@ const Dashboard = () => {
               <div className="counter_no">
                 <div>
                   <p className="total_no text-info font-weight-bold">
-                    {count?.tasksCount}
+                    {count?.attendanceCount}
                   </p>
                   <p className="head_couter text-warning fw-bold">
                     View Attendance

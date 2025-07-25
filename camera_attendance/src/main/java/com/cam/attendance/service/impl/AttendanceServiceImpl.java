@@ -37,7 +37,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 		User user = userRepo.findByUsername(principal.getName()).get();
 		List<Attendance> listAttendance = attendanceRepo.findByUser(user);
 		Map<String, Object> response = new HashMap<>();
-		response.put("tasksCount", listAttendance.size());
+		response.put("attendanceCount", listAttendance.size());
 		return response;
 	}
 
@@ -68,26 +68,17 @@ public class AttendanceServiceImpl implements AttendanceService {
 		Pageable pageable = PageRequest.of(page - 1, 10);
 
 		Specification<Attendance> spec = Specification
-				.where(AttendanceSpecification.betweenAttendanceDate(search.getFromDate(), search.getToDate())
-						.and(AttendanceSpecification.withUser(user)));
+				.where(AttendanceSpecification.withUser(user)
+						.and(AttendanceSpecification.betweenAttendanceDate(search.getFromDate(), search.getToDate())));
 		Page<Attendance> attendances = attendanceRepo.findAll(spec, pageable);
-
-		/*
-		 * List<Task> taskList = taskDao.search(search, user); List<TaskDTO> taskDtoList
-		 * = taskList.stream().map((task) -> modelMapper.map(task, TaskDTO.class))
-		 * .collect(Collectors.toList());
-		 * 
-		 * page = (page > 0) ? page : 1; from = ROWS * (page - 1); records = (long)
-		 * taskDtoList.size(); total = (int) Math.ceil((double) records / (double)
-		 * ROWS); List<TaskDTO> pagTaskList =
-		 * taskDtoList.stream().skip(from).limit(ROWS).collect(Collectors.toList());
-		 * 
-		 * Map<String, Object> response = new HashMap<>(); response.put("pagTaskList",
-		 * pagTaskList); response.put("currentPage", page); response.put("totalPages",
-		 * total); response.put("totalItems", taskDtoList.size());
-		 * session.setAttribute("page", page); session.setAttribute("search", search);
-		 */
 		return attendances;
+	}
+
+	@Override
+	public Page<Attendance> search(SearchAttendance search, HttpSession session, Principal principal) {
+		int page = 1;
+		Page<Attendance> response = pagination(search, page, session, principal);
+		return response;
 	}
 
 }
