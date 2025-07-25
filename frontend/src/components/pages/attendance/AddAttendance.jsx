@@ -4,6 +4,7 @@ import {
   clearMessages,
   createAttendance,
   updateAttendance,
+  checkTodayCheckInStatus,
 } from '../../../features/slice/attendanceSlice'
 import { useNavigate, useParams } from 'react-router'
 import avatar from '../../../assets/images/avatar.png'
@@ -11,8 +12,13 @@ import './index.css'
 import { toast } from 'react-toastify'
 
 const AddAttendance = () => {
-  const { attendanceList, successMessage, failMessage, isLoading } =
-    useSelector((state) => state.attendance)
+  const {
+    attendanceList,
+    successMessage,
+    failMessage,
+    isLoading,
+    hasCheckedIn,
+  } = useSelector((state) => state.attendance)
   const dispatch = useDispatch()
   const [errors, setErrors] = useState({
     checkInTime: '',
@@ -26,6 +32,9 @@ const AddAttendance = () => {
   const { id } = useParams()
   const [image, setImage] = useState(avatar)
   const [imageFile, setImageFile] = useState(null)
+  useEffect(() => {
+    dispatch(checkTodayCheckInStatus())
+  }, [dispatch])
   useEffect(() => {
     if (id) {
       const attendance = attendanceList.find(
@@ -48,6 +57,9 @@ const AddAttendance = () => {
   useEffect(() => {
     if (successMessage) {
       toast.success(successMessage)
+      if (!id) {
+        navigate('/dashboard')
+      }
     }
 
     if (failMessage) {
@@ -173,21 +185,41 @@ const AddAttendance = () => {
                   )}
                 </div>
                 <div className="mb-3">
-                  <label className="form-label">Check-In-Time</label>
+                  <label className="form-label">Check-In Time</label>
                   <input
                     type="datetime-local"
                     className={`form-control ${
                       errors.checkInTime ? 'is-invalid' : ''
                     }`}
                     name="checkInTime"
-                    value={attendanceData.checkInTime}
-                    readOnly // ✅ prevent manual editing
+                    value={attendanceData.checkInTime || ''}
+                    readOnly
                   />
-
                   {errors.checkInTime && (
                     <div className="invalid-feedback">{errors.checkInTime}</div>
                   )}
                 </div>
+
+                {hasCheckedIn && (
+                  <div className="mb-3">
+                    <label className="form-label">Check-Out Time</label>
+                    <input
+                      type="datetime-local"
+                      className={`form-control ${
+                        errors.checkOutTime ? 'is-invalid' : ''
+                      }`}
+                      name="checkOutTime"
+                      value={attendanceData.checkOutTime || ''}
+                      readOnly
+                    />
+                    {errors.checkOutTime && (
+                      <div className="invalid-feedback">
+                        {errors.checkOutTime}
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {/* <button type="submit" className="btn btn-primary">
                   Submit
                 </button> */}

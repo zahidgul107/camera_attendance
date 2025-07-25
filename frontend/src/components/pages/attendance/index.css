@@ -43,7 +43,7 @@
   margin: 8px 0 8px;
 }
 
-.couter_icon > span {
+.couter_icon>span {
   border-right: solid rgba(255, 255, 255, 0.3) 1px;
   padding-right: 35px;
 }
@@ -114,14 +114,30 @@
   font-size: 14px;
   font-weight: 500;
 }
-.pagination li > button.active {
-  background-color: #8000ff !important; /* Set your desired active link background color */
-  color: white !important; /* Set your desired active link text color */
+
+.pagination li>button.active {
+  background-color: #8000ff !important;
+  /* Set your desired active link background color */
+  color: white !important;
+  /* Set your desired active link text color */
 }
+
 .pagination.button_section {
   margin: 5px;
 }
-.pagination > .page-item > .page-link {
+
+.pagination>.page-item>.page-link {
   color: #8000ff;
   background-color: white;
+}
+
+.rounded {
+  border-radius: 50% !important;
+  height: 50px;
+  width: 50px;
+  transition: all .2s ease-in-out;
+}
+
+.rounded:hover {
+  transform: scale(6);
 }

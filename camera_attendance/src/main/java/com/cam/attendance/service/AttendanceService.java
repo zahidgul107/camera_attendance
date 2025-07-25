@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.data.domain.Page;
 
 import com.cam.attendance.domain.Attendance;
+import com.cam.attendance.dto.SearchAttendance;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -14,5 +15,7 @@ public interface AttendanceService {
 	Map<String, Object> getCount(Principal principal);
 
 	Page<Attendance> getPagAttendance(int page, HttpSession session, Principal principal);
+
+	Page<Attendance> search(SearchAttendance search, HttpSession session, Principal principal);
 
 }

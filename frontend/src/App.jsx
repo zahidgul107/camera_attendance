@@ -12,6 +12,7 @@ import { useSelector } from 'react-redux'
 import AddAttendance from './components/pages/attendance/AddAttendance'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import ListAttendance from './components/pages/attendance/ListAttendance'
 
 function App() {
   const { loggedInUser } = useSelector((state) => state.user)
@@ -42,6 +43,14 @@ function App() {
             element={
               <AuthenticatedRoute>
                 <ListTasks />
+              </AuthenticatedRoute>
+            }
+          ></Route>
+          <Route
+            path="/viewAttendance"
+            element={
+              <AuthenticatedRoute>
+                <ListAttendance />
               </AuthenticatedRoute>
             }
           ></Route>

@@ -2,8 +2,8 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import axios from 'axios'
 import { signOut } from '../login/userSlice'
 
-const API_URL = 'https://aca9236bface.ngrok-free.app/api/dashboard'
-//const API_URL = 'http://localhost:9901/api/dashboard'
+//const API_URL = 'https://aca9236bface.ngrok-free.app/api/dashboard'
+const API_URL = 'http://localhost:9901/api/dashboard'
 
 export const getCount = createAsyncThunk(
   'attendance/getCount',

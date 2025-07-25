@@ -25,7 +25,7 @@ public class FaceRecognitionServiceImpl implements FaceRecognitionService {
 		User employee = employeeRepository.findById(employeeId)
 			    .orElseThrow(() -> new RuntimeException("Employee not found with ID: " + employeeId));
 		System.err.println(employee.getName());
-		File storedFace = new File(Constants.PATH + employee.getImageName());
+		File storedFace = new File(Constants.Images_path + employee.getImageName());
 
 		boolean match = faceMatcher.compareFaces(storedFace, inputFace);
 		System.err.println(match);
