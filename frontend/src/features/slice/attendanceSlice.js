@@ -30,61 +30,6 @@ export const createAttendance = createAsyncThunk(
   }
 )
 
-export const updateAttendance = createAsyncThunk(
-  'attendance/updateAttendance',
-  async (payload, thunkAPI) => {
-    try {
-      const { user } = thunkAPI.getState()
-      const loggedInUser = user.loggedInUser
-      const config = {
-        headers: {
-          Authorization: `${loggedInUser.tokenType} ${loggedInUser.accessToken}`,
-        },
-      }
-      const resp = await axios.put(
-        API_URL + '/update/' + payload.id,
-        payload,
-        config
-      )
-      return resp.data
-    } catch (error) {
-      if (error?.response?.status === 401) {
-        thunkAPI.dispatch(signOut())
-      }
-      return thunkAPI.rejectWithValue(error)
-    }
-  }
-)
-
-export const getAllAttendance = createAsyncThunk(
-  'attendance/getAllAttendance',
-  async (page = 0, thunkAPI) => {
-    try {
-      const { user } = thunkAPI.getState()
-      const loggedInUser = user.loggedInUser
-      const params = {
-        page: page,
-        size: 10,
-      }
-
-      const config = {
-        headers: {
-          Authorization: `${loggedInUser.tokenType} ${loggedInUser.accessToken}`,
-        },
-        params: params,
-      }
-
-      const resp = await axios.get(API_URL + '/getAllAttendance', config)
-      return resp.data
-    } catch (error) {
-      if (error?.response?.status === 401) {
-        thunkAPI.dispatch(signOut())
-      }
-      return thunkAPI.rejectWithValue(error)
-    }
-  }
-)
-
 export const getPagAttendance = createAsyncThunk(
   'attendance/getPagAttendance',
   async (page = 1, thunkAPI) => {
@@ -107,35 +52,6 @@ export const getPagAttendance = createAsyncThunk(
       console.log(resp.data)
       return resp.data
     } catch (error) {
-      if (error?.response?.status === 401) {
-        thunkAPI.dispatch(signOut())
-      }
-      return thunkAPI.rejectWithValue(error)
-    }
-  }
-)
-
-export const deleteAttendance = createAsyncThunk(
-  'attendance/deleteAttendance',
-  async (payload, thunkAPI) => {
-    try {
-      const { user } = thunkAPI.getState()
-      const loggedInUser = user.loggedInUser
-
-      const config = {
-        headers: {
-          Authorization: `${loggedInUser.tokenType} ${loggedInUser.accessToken}`,
-        },
-      }
-      const resp = await axios.delete(API_URL + '/delete/' + payload.id, config)
-      if (resp.status === 200) {
-        thunkAPI.dispatch(getPagAttendance(payload.currentPage))
-      }
-      return resp.data
-    } catch (error) {
-      if (error.response?.status === 400) {
-        thunkAPI.dispatch(getPagAttendance(payload.currentPage))
-      }
       if (error?.response?.status === 401) {
         thunkAPI.dispatch(signOut())
       }
@@ -186,7 +102,8 @@ export const checkTodayCheckInStatus = createAsyncThunk(
         `${API_URL}/today-checkin-status`,
         config
       )
-      return response.data.checkedIn
+      console.log(response)
+      return response.data
     } catch (error) {
       if (error?.response?.status === 401) {
         thunkAPI.dispatch(signOut())
@@ -202,7 +119,7 @@ const initialState = {
   successMessage: '',
   failMessage: '',
   isLoading: false,
-  hasCheckedIn: false,
+  attendance: '',
 }
 
 const attendanceSlice = createSlice({
@@ -210,7 +127,7 @@ const attendanceSlice = createSlice({
   initialState,
   reducers: {
     removeAttendance: (state, action) => {
-      const taskId = action.payload
+      const attendanceId = action.payload
     },
     clearMessages: (state) => {
       state.successMessage = ''
@@ -233,22 +150,6 @@ const attendanceSlice = createSlice({
         if (action.payload.code === 'ERR_NETWORK')
           state.errorMessage = action.payload.message
       })
-      .addCase(deleteAttendance.pending, (state) => {
-        state.isLoading = true
-        state.errorMessage = ''
-      })
-      .addCase(deleteAttendance.fulfilled, (state, action) => {
-        state.isLoading = false
-        state.errorMessage = ''
-        state.successMessage = action.payload
-      })
-      .addCase(deleteAttendance.rejected, (state, action) => {
-        state.isLoading = false
-        if (action?.payload?.code === 'ERR_NETWORK')
-          state.errorMessage = action.payload.message
-        if (action?.payload?.response?.status === 400)
-          state.failMessage = action.payload.response.data
-      })
       .addCase(createAttendance.pending, (state) => {
         state.isLoading = true
       })
@@ -263,22 +164,6 @@ const attendanceSlice = createSlice({
         if (action?.payload?.response?.status === 400)
           state.failMessage = action.payload.response.data.message
         if (action?.payload?.response?.status === 404)
-          state.failMessage = action.payload.response.data
-      })
-      .addCase(updateAttendance.pending, (state) => {
-        state.isLoading = true
-        state.errorMessage = ''
-      })
-      .addCase(updateAttendance.fulfilled, (state, action) => {
-        state.isLoading = false
-        state.errorMessage = ''
-        state.successMessage = action.payload.message
-      })
-      .addCase(updateAttendance.rejected, (state, action) => {
-        state.isLoading = false
-        if (action.payload.code === 'ERR_NETWORK')
-          state.errorMessage = action.payload.message
-        if (action.payload.response.status === 400)
           state.failMessage = action.payload.response.data
       })
       .addCase(searchAttendance.pending, (state, action) => {
@@ -296,14 +181,17 @@ const attendanceSlice = createSlice({
           state.errorMessage = action.payload.message
       })
       .addCase(checkTodayCheckInStatus.pending, (state) => {
-        state.checkInStatusLoading = true
+        state.isLoading = true
       })
       .addCase(checkTodayCheckInStatus.fulfilled, (state, action) => {
-        state.checkInStatusLoading = false
-        state.hasCheckedIn = action.payload
+        state.isLoading = false
+        state.errorMessage = ''
+        state.attendance = action.payload
       })
       .addCase(checkTodayCheckInStatus.rejected, (state) => {
-        state.checkInStatusLoading = false
+        state.isLoading = false
+        if (action.payload.code === 'ERR_NETWORK')
+          state.errorMessage = action.payload.message
       })
   },
 })

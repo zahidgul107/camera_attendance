@@ -18,4 +18,6 @@ public interface AttendanceService {
 
 	Page<Attendance> search(SearchAttendance search, HttpSession session, Principal principal);
 
+	Attendance existsByUserAndDate(Principal principal);
+
 }

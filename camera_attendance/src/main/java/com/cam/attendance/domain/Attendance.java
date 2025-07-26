@@ -26,9 +26,15 @@ public class Attendance {
 
 	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime checkInTime;
+	
+	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    private LocalDateTime checkOutTime;
     
-    @Column(name = "attendance_image")
-    private String imageName;
+    @Column(name = "attendance_checkin_image")
+    private String attendanceCheckInImageName;
+    
+    @Column(name = "attendance_checkout_image")
+    private String attendanceCheckOutImageName;
 
 	public Long getId() {
 		return id;
@@ -54,12 +60,28 @@ public class Attendance {
 		this.checkInTime = checkInTime;
 	}
 
-	public String getImageName() {
-		return imageName;
+	public String getAttendanceCheckInImageName() {
+		return attendanceCheckInImageName;
 	}
 
-	public void setImageName(String imageName) {
-		this.imageName = imageName;
+	public void setAttendanceCheckInImageName(String attendanceCheckInImageName) {
+		this.attendanceCheckInImageName = attendanceCheckInImageName;
+	}
+
+	public String getAttendanceCheckOutImageName() {
+		return attendanceCheckOutImageName;
+	}
+
+	public void setAttendanceCheckOutImageName(String attendanceCheckOutImageName) {
+		this.attendanceCheckOutImageName = attendanceCheckOutImageName;
+	}
+
+	public LocalDateTime getCheckOutTime() {
+		return checkOutTime;
+	}
+
+	public void setCheckOutTime(LocalDateTime checkOutTime) {
+		this.checkOutTime = checkOutTime;
 	}
     
     
