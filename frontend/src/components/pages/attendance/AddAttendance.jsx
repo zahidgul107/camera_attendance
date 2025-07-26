@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import {
   clearMessages,
   createAttendance,
-  updateAttendance,
   checkTodayCheckInStatus,
 } from '../../../features/slice/attendanceSlice'
 import { useNavigate, useParams } from 'react-router'
@@ -12,21 +11,20 @@ import './index.css'
 import { toast } from 'react-toastify'
 
 const AddAttendance = () => {
-  const {
-    attendanceList,
-    successMessage,
-    failMessage,
-    isLoading,
-    hasCheckedIn,
-  } = useSelector((state) => state.attendance)
+  const { attendanceList, successMessage, failMessage, isLoading, attendance } =
+    useSelector((state) => state.attendance)
+  const loggedInUser = useSelector((store) => store.user.loggedInUser)
+  console.log('attendance: ', attendance)
   const dispatch = useDispatch()
   const [errors, setErrors] = useState({
     checkInTime: '',
+    checkOutTime: '',
     imageFile: '',
   })
 
   const [attendanceData, setAttendanceData] = useState({
     checkInTime: '',
+    checkOutTime: '',
   })
   const navigate = useNavigate()
   const { id } = useParams()
@@ -78,7 +76,7 @@ const AddAttendance = () => {
     }
   }, [successMessage, failMessage, dispatch])
 
-  const saveOrUpdateAttendance = (e) => {
+  const saveAttendance = (e) => {
     e.preventDefault()
 
     const newErrors = {}
@@ -96,12 +94,8 @@ const AddAttendance = () => {
       formData.append('attendance', JSON.stringify(attendanceData))
       formData.append('imageName', imageFile)
 
-      if (id) {
-        formData.append('id', id)
-        dispatch(updateAttendance(formData))
-      } else {
-        dispatch(createAttendance(formData))
-      }
+      dispatch(createAttendance(formData))
+
       const now = new Date()
       const localISOTime = new Date(
         now.getTime() - now.getTimezoneOffset() * 60000
@@ -115,23 +109,14 @@ const AddAttendance = () => {
   }
 
   function pageTitle() {
-    if (id) {
-      return <h2 className="text-center">Update Attendance</h2>
-    } else {
-      return <h2 className="text-center">Add Attendance</h2>
-    }
+    return (
+      <h2 className="text-center">
+        {attendance
+          ? `Time to Check Out ${loggedInUser.name}`
+          : `Mark Your Attendance ${loggedInUser.name}`}
+      </h2>
+    )
   }
-
-  // if (isLoading) {
-  //   return (
-  //     <div id="preloader">
-  //       <div></div>
-  //       <div></div>
-  //       <div></div>
-  //       <div></div>
-  //     </div>
-  //   )
-  // }
 
   const handleImageChange = (e) => {
     const file = e.target.files?.[0]
@@ -159,7 +144,7 @@ const AddAttendance = () => {
           <div className="card col-md-6 offset-md-3 offset-md-3">
             {pageTitle()}
             <div className="card-body">
-              <form onSubmit={saveOrUpdateAttendance}>
+              <form onSubmit={saveAttendance}>
                 <div className="container">
                   <div className="avatar-upload">
                     <div className="avatar-edit">
@@ -184,6 +169,7 @@ const AddAttendance = () => {
                     <h1 className="text-danger mt-2">{errors.imageFile}</h1>
                   )}
                 </div>
+
                 <div className="mb-3">
                   <label className="form-label">Check-In Time</label>
                   <input
@@ -200,7 +186,7 @@ const AddAttendance = () => {
                   )}
                 </div>
 
-                {hasCheckedIn && (
+                {attendance && (
                   <div className="mb-3">
                     <label className="form-label">Check-Out Time</label>
                     <input
@@ -220,20 +206,13 @@ const AddAttendance = () => {
                   </div>
                 )}
 
-                {/* <button type="submit" className="btn btn-primary">
-                  Submit
-                </button> */}
                 <div className="col-md-12 text-center">
                   {isLoading ? (
                     <div className="loading" style={{ display: 'block' }}>
                       Submitting...
                     </div>
                   ) : (
-                    <button
-                      type="submit"
-                      className="btn btn-primary"
-                      //  onClick={(e) => handleRegistrationForm(e)}
-                    >
+                    <button type="submit" className="btn btn-primary">
                       Submit
                     </button>
                   )}

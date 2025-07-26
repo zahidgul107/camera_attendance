@@ -4,8 +4,6 @@ import './index.css'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   clearMessages,
-  deleteAttendance,
-  getAllAttendance,
   getPagAttendance,
   searchAttendance,
   API_URL,
@@ -33,17 +31,6 @@ const ListAttendance = () => {
 
   useEffect(() => {
     let timer
-    if (errorMessage) {
-      timer = setInterval(() => {
-        dispatch(getAllAttendance())
-      }, 30000)
-    }
-
-    return () => clearInterval(timer)
-  }, [errorMessage, dispatch])
-
-  useEffect(() => {
-    let timer
     if (successMessage || failMessage) {
       timer = setTimeout(() => {
         dispatch(clearMessages())
@@ -54,19 +41,6 @@ const ListAttendance = () => {
     }
   }, [successMessage, failMessage, dispatch])
 
-  const updateAttendance = (id) => {
-    navigate(`/updateAttendance/${id}`)
-  }
-
-  const handleDeleteTask = (id) => {
-    const currentPage = attendanceList.currentPage
-    const attendanceData = {
-      id,
-      currentPage,
-    }
-    dispatch(deleteAttendance(attendanceData))
-  }
-
   const handleChange = (e) => {
     setSearch({ ...search, [e.target.name]: e.target.value })
   }
@@ -76,17 +50,6 @@ const ListAttendance = () => {
     console.log(search)
     dispatch(searchAttendance(search))
   }
-
-  //   if (isLoading) {
-  //     return (
-  //       <div id="preloader">
-  //         <div></div>
-  //         <div></div>
-  //         <div></div>
-  //         <div></div>
-  //       </div>
-  //     )
-  //   }
 
   const generatePageNumbers = () => {
     const maxPagesOnEachSide = 1
@@ -217,6 +180,7 @@ const ListAttendance = () => {
                 <th scope="col">Name</th>
                 <th scope="col">Email</th>
                 <th scope="col">Check-In-Time</th>
+                <th scope="col">Check-Out-Time</th>
                 <th scope="col">Attendance Photo</th>
               </tr>
             </thead>
@@ -226,6 +190,7 @@ const ListAttendance = () => {
                   <td>{loggedInUser.name}</td>
                   <td>{loggedInUser.email}</td>
                   <td>{attendance.checkInTime}</td>
+                  <td>{attendance.checkOutTime}</td>
                   <td>
                     <img
                       src={`${API_URL}/getImage/${encodeURIComponent(
@@ -287,7 +252,7 @@ const ListAttendance = () => {
                       )
                     }
                     disabled={
-                      attendanceList.pageable.pageNumber >=
+                      attendanceList?.pageable?.pageNumber >=
                       attendanceList.totalPages - 1
                     }
                   >

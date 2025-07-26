@@ -1,10 +1,12 @@
 package com.cam.attendance.service.impl;
 
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -79,6 +81,16 @@ public class AttendanceServiceImpl implements AttendanceService {
 		int page = 1;
 		Page<Attendance> response = pagination(search, page, session, principal);
 		return response;
+	}
+
+	@Override
+	public Attendance existsByUserAndDate(Principal principal) {
+		Optional<User> userOpt = userRepo.findByUsername(principal.getName());
+
+	    User user = userOpt.get();
+	    LocalDate today = LocalDate.now();
+	    Attendance attendance = attendanceRepo.existsByUserAndDate(user, today);
+		return attendance;
 	}
 
 }

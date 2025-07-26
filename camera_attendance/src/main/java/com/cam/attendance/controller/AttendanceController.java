@@ -3,12 +3,16 @@ package com.cam.attendance.controller;
 import java.io.File;
 import java.nio.file.Files;
 import java.security.Principal;
+import java.time.LocalDate;
+import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,10 +30,10 @@ import com.cam.attendance.repository.AttendanceRepository;
 import com.cam.attendance.response.MessageResponse;
 import com.cam.attendance.service.AttendanceService;
 import com.cam.attendance.service.FaceRecognitionService;
+import com.cam.attendance.service.UserService;
 import com.cam.attendance.utils.CommonMethods;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.mock.web.MockMultipartFile;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -49,6 +53,9 @@ public class AttendanceController {
 	
 	@Autowired
 	AttendanceService attendanceSer;
+	
+	@Autowired
+	UserService userSer;
 
 	@PostMapping("/mark/{employeeId}")
 	public ResponseEntity<?> markAttendance(@RequestParam("imageName") MultipartFile liveImage,
@@ -92,7 +99,7 @@ public class AttendanceController {
 	            try {
 	                attendance = objMapper.readValue(attendanceJson, Attendance.class);
 	                attendance.setUser(matchedEmployee);
-	                attendance.setImageName(liveImage.getOriginalFilename());
+	                attendance.setAttendanceCheckInImageName(liveImage.getOriginalFilename());
 	                attendanceRepo.save(attendance);
 	                tempFile.delete();
 	                return ResponseEntity.ok(new MessageResponse("Attendance marked for " + matchedEmployee.getName()));
@@ -163,20 +170,14 @@ public class AttendanceController {
 		return ResponseEntity.ok(response);
 	}
 	
-	@GetMapping("/api/attendance/today-checkin-status")
+	@GetMapping("/today-checkin-status")
 	public ResponseEntity<?> hasCheckedInToday(Principal principal) {
-	    Optional<User> userOpt = userRepo.findByUsername(principal.getName());
 
-	    if (userOpt.isEmpty()) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
-	    }
-
-	    User user = userOpt.get();
-	    LocalDate today = LocalDate.now();
-
-	    boolean hasCheckedIn = attendanceRepo.existsByUserAndDate(user.getId(), today);
-
-	    return ResponseEntity.ok(Map.of("checkedIn", hasCheckedIn));
+	    Attendance attendance = attendanceSer.existsByUserAndDate(principal);
+	    if (attendance != null) {
+	    	System.err.println(attendance.getCheckInTime());
+		}
+	    return ResponseEntity.ok(attendance);
 	}
 
 	
